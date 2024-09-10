@@ -420,3 +420,151 @@ footer {
 footer p {
     text-align: center;
 }
+
+/* PROJECT PAGE */
+
+#project-header {
+    height: 50vh;
+    width: 100%;
+    padding-top: 0;
+    margin: 0;
+}
+
+.banner-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.banner-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.banner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.proj-title {
+    color: white;
+    font-size: 3rem;
+    text-align: center;
+    padding: 0 2rem;
+}
+
+#project-intro {
+    padding: 4rem 10rem;
+    margin-bottom: 2rem;
+}
+
+#project-intro .section-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+#project-intro h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.intro-images {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.intro-img {
+    width: calc(33.33% - 1.33rem);
+    height: 100%;
+    object-fit: cover;
+    border-radius: 2rem;
+}
+
+.image-collage {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.collage-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.collage-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    margin-bottom: 1rem;
+    border-radius: 1rem;
+}
+
+.collage-item h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.collage-item p {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.centered-image {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 2rem 0; /* Add margin to separate from other content */
+}
+
+.centered-image img {
+    max-width: 100%; /* Ensure the image is responsive */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 1rem; /* Optional: add rounded corners */
+}
+
+.centered-image figcaption {
+    margin-top: 0.5rem; /* Space between image and caption */
+    font-size: 0.9rem;
+    color: #666; /* Optional: change the color for better readability */
+    text-align: center;
+}
+
+.before-after-container {
+    display: flex;
+    justify-content: center; /* Center the images horizontally */
+    align-items: flex-start; /* Align items at the top */
+    gap: 2rem; /* Space between the images */
+    margin: 2rem 0; /* Add margin for spacing around the container */
+}
+
+.image-container {
+    text-align: center; /* Center the caption below each image */
+    max-width: 45%; /* Ensure the images don't take up too much space */
+}
+
+.before-after-img {
+    width: 100%; /* Ensure the image is responsive */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 1rem; /* Optional: add rounded corners */
+}
+
+.image-caption {
+    margin-top: 0.5rem; /* Space between image and caption */
+    font-size: 0.9rem;
+    color: #666; /* Optional: change the color for better readability */
+    line-height: 1.4; /* Improve readability for multiline text */
+}

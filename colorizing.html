@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colorizing the Prokudin-Gorskii photo collection - Gurvir Kooner</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="mediaqueries.css">
+</head>
+<body>
+    <nav id="desktop-nav">
+        <div class="logo">Gurvir Kooner</div>
+        <div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="index.html#experience">Experience</a></li>
+                <li><a href="index.html#projects">Projects</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+    <nav id="hamburger-nav">
+        <div class="logo">Gurvir Kooner</div>
+        <div class="hamburger-menu">
+            <div class="hamburger-icon" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="menu-links">
+                <li><a href="index.html" onclick="toggleMenu()">Home</a></li>
+                <li><a href="index.html#about" onclick="toggleMenu()">About</a></li>
+                <li><a href="index.html#experience" onclick="toggleMenu()">Experience</a></li>
+                <li><a href="index.html#projects" onclick="toggleMenu()">Projects</a></li>
+                <li><a href="index.html#contact" onclick="toggleMenu()">Contact</a></li>
+            </div>
+        </div>
+    </nav>
+    
+    <section id="project-header">
+        <div class="banner-container">
+            <img src="./assets/out_melons.jpg" alt="Colorizing the Prokudin-Gorskii photo collection" class="banner-img">
+            <div class="banner-overlay">
+                <h1 class="proj-title">Colorizing the Prokudin-Gorskii photo collection</h1>
+            </div>
+        </div>
+    </section>
+
+    <section id="project-intro">
+        <div class="section-container">
+            <h2>Introduction</h2>
+            <p>
+                Before the Russian Revolution in 1918, Sergei Mikhailovich was commisioned by the Tzar to travel across the empire
+                and take color photographs. While the technology for color photography didn't exist, he recorded three exposures onto a glass plate using a red, green, and blue filter.
+                He hoped in the future he would be able to render them into color images. Unforunately, he did not get to see this plan
+                into fruition. His RGB glass plate negatives of the Russian Empire were purchased by Library of Congress in 1948 and later digitized. These digitized glass plates are shown
+                below for reference. The goal of this project is to process these digital copies and colorize them.
+            </p>
+            <div class="intro-images">
+                <img src="./assets/cathedral.jpg" alt="Intro image 1" class="intro-img">
+                <img src="./assets/tobolsk.jpg" alt="Intro image 2" class="intro-img">
+                <img src="./assets/monastery.jpg" alt="Intro image 3" class="intro-img">
+            </div>
+            <h2>Approach</h2>
+            <p>
+                In my approach, I started by taking separating the images into the blue, green, and red channels.
+                This was done by dividing the image into thirds. <br><br>
+                After separating these channels, I fixed the blue channel
+                and then aligned the red channel and green channel to it. The easiest way to align these channels
+                is to exhaustively search the images over a window of displacements. We then score the images using an image
+                matching metric and then pick the displacement with the best score. I opted to used the Euclidean distance of each
+                image as my image matching metric and chose a default window of [-20, 19]. By using the Euclidean distance I just take the difference between each image, square it, sum it,
+                and finally take the square root. Since there is artifacting on the edges, I also crop the edges by either 10% for the smaller images and 20% for the larger images before aligning.<br><br>
+                This worked well for the smaller JPG images, but for the TIFs we need a larger range of displacements. However, this drastically increases the computation time. To counteract this increase in
+                computation time, we can search using image pyramids. Within an image pyramid, we have the image represented at multiple scales. In my implementation, I used a scaling factor of 2. In my implementation,
+                I determine the scaling factor to get the image small enough to run the single-scale implementation earlier. This is run over a window of [-50, 49]. Then we go up the pyramid scaling up until we reach the original
+                image size, but looking with a window of [-2, 1] and adjusting our displacement vector accordingly. <br><br>
+                Finally, using the displacement vectors I shift the green and red channel images. I crop 5% off the edges from the smaller images and 10% off the edges of the larger images to remove artifacting. Finally, I stack the channels to produce
+                an RGB color image. <br><br>
+                This ultimately worked for almost all the images except for the image of the emir (shown below). The red channel is not properly aligned because we used the blue channel to align the red channel. In the center of the image the intensity of
+                 blue pixels is significantly higher
+                compared to red. Therefore, using Euclidean distance as an image matching metric would be less effective since the pixel values would be drastically different. In order to properly align it, I had to use feature based alignment using edges.
+                I elaborate on this procedure in my bells & whistles section.
+            </p>
+            <figure class="centered-image">
+                <img src="./assets/out_emir.jpg" alt="Approach Image">
+                <figcaption>Emir of Bukhara</figcaption>
+            </figure>
+            <h2>Results</h2>
+            <p>Below are the results for my initial colorization implementation. Below each image the displacement vectors used to align the red and green channels are listed.</p>
+            <div class="image-collage">
+                <div class="collage-item">
+                    <h4>Church</h4>
+                    <img src="assets/out_church.jpg" alt="Result 1">
+                    <p>Green: (1, 21) Red: (-4, 57)</p>
+                </div>
+                <div class="collage-item">
+                    <h4>Cathedral</h4>
+                    <img src="assets/out_cathedral.jpg" alt="Result 1">
+                    <p>Green: (2, 5) Red: (3, 12)</p>
+                </div>
+                <div class="collage-item">
+                    <h4>Onion Church</h4>
+                    <img src="assets/out_onion_church.jpg" alt="Result 1">
+                    <p>Green: (25, 49) Red: (33, 105)</p>
+                </div>
+                <div class="collage-item">
+                    <h4>Monastery</h4>
+                    <img src="assets/out_monastery.jpg" alt="Result 1">
+                    <p>Green: (2, -3) Red: (2, 3)</p>
+                </div>
+                <div class="collage-item">
+                    <h4>Tobalsk</h4>
+                    <img src="assets/out_tobolsk.jpg" alt="Result 1">
+                    <p>Green: (3, 3) Red: (3, 6)</p>
+                </div>
+                <div class="collage-item">
+                    <h4>Sculpture</h4>
+                    <img src="assets/out_sculpture.jpg" alt="Result 1">
+                    <p>Green: (-11, 29) Red: (-26, 137)</p>
+                </div>
+                <div class="collage-item">
+                    <h4>Self Portrait</h4>
+                    <img src="assets/out_self_portrait.jpg" alt="Result 1">
+                    <p>Green: (25, 77) Red: (33, 173)</p>
+                </div>
+                <div class="collage-item">
+                    <h4>Lady</h4>
+                    <img src="assets/out_lady.jpg" alt="Result 1">
+                    <p>Green: (5, 45) Red: (9, 105)</p>
+                </div>
+                <div class="collage-item">
+                    <h4>Melons</h4>
+                    <img src="assets/out_melons.jpg" alt="Result 1">
+                    <p>Green: (5, 77) Red: (9, 173)</p>
+                </div>
+                <div class="collage-item">
+                    <h4>Harvesters</h4>
+                    <img src="assets/out_harvesters.jpg" alt="Result 1">
+                    <p>Green: (13, 57) Red: (9, 121)</p>
+                </div>
+                <div class="collage-item">
+                    <h4>Icon</h4>
+                    <img src="assets/out_icon.jpg" alt="Result 1">
+                    <p>Green: (13, 37) Red: (21, 85)</p>
+                </div>
+                <div class="collage-item">
+                    <h4>Three Generations</h4>
+                    <img src="assets/out_three_generations.jpg" alt="Result 1">
+                    <p>Green: (13, 45) Red: (9, 105)</p>
+                </div>
+                <div class="collage-item">
+                    <h4>Emir</h4>
+                    <img src="assets/out_emir.jpg" alt="Result 1">
+                    <p>Green: (21, 45) Red: (-199, 0)</p>
+                </div>
+                <div class="collage-item">
+                    <h4>Train</h4>
+                    <img src="assets/out_train.jpg" alt="Result 1">
+                    <p>Green: (3, 41) Red: (29, 85)</p>
+                </div>
+            </div>
+            <h2>Additional Images</h2>
+            <p>Below are some other interesting colorized images from the Prokudin-Gorskii collection.</p>
+            <div class="image-collage">
+                <div class="collage-item">
+                    <h4>Forest Road</h4>
+                    <img src="assets/out_forest_road.jpg" alt="Result 1">
+                    <p>Green: (-30, 33) Red: (5, 93)</p>
+                </div>
+                <div class="collage-item">
+                    <h4>Lugano</h4>
+                    <img src="assets/out_lugano.jpg" alt="Result 1">
+                    <p>Green: (-16, 37) Red: (-28, 89)</p>
+                </div>
+                <div class="collage-item">
+                    <h4>Sunset at the Sea</h4>
+                    <img src="assets/out_sunset_at_the_sea.jpg" alt="Result 1">
+                    <p>Green: (0, 0) Red: (73, 0)</p>
+                </div>
+                <div class="collage-item">
+                    <h4>Little Russia</h4>
+                    <img src="assets/out_little_russia.jpg" alt="Result 1">
+                    <p>Green: (5, -20) Red: (9, -32)</p>
+                </div>
+                <div class="collage-item">
+                    <h4>Brick Building</h4>
+                    <img src="assets/out_brick_building.jpg" alt="Result 1">
+                    <p>Green: (-12, 41) Red: (-27, 97)</p>
+                </div>
+                <div class="collage-item">
+                    <h4>Bell Tower</h4>
+                    <img src="assets/out_bell_tower.jpg" alt="Result 1">
+                    <p>Green: (13, 45) Red: (9, 89)</p>
+                </div>
+            </div>
+            <h2>Bells & Whistles</h2>
+            <p>Below are additional improvements made to my base implementation.</p>
+            <h3>Feature Based Alignment - Sobel Edge Detection</h3>
+            <p>In my base implementation, my emir image did not align properly due to the high blue intensity compared to the red intensity. As a result,
+                I used edge detection using the Sobel operator. I initially applied a Gaussian blur. Afterwards, I convolve the image using the Sobel kernels
+                in the vertical and horizontal directions to estimate the image intensity gradient. Finally, I return a black and white image after applying a
+                threshold to filter out the edges. Using this feature based alignment was effective in aligning the emir as shown below.
+            </p>
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/out_emir.jpg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Before:</strong> Euclidean
+                        <br>
+                        Green: (21, 45) Red: (-199, 0)
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/out_edge_emir.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>After:</strong> Sobel
+                        <br>
+                        Green: (21, 45) Red: (37, 105)
+                    </figcaption>
+                </figure>
+            </div>            
+            <h3>White Balancing - Gray World Algorithm</h3>
+            <p>
+                I also incorporated automatic white balancing. In order to do this, I needed to estimate the illuminant.
+                Afterwards I need to manipulate the colors to counteract the illuminant and simulate a neutral illumninant.
+                I use the gray world algorithm and assume the average color is the illuminant and shift it to gray. The gray world
+                algorithm assumes the average color in every scene is gray and is equal in magnitude. To adjust the color of the image
+                I compute the average pixel intensity of all the pixels and the average pixel intensity of each channel. This gives me a scalar
+                and a tuple of length 3. I divide average pixel intensity by the average pixel intensity of each channel and then multiply the pixel
+                in each channel by the responding scalar multiplier for each channel. This finally gives us our white balanced image.
+            </p>
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/out_church.jpg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Before:</strong> Church
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/white_church.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>After:</strong> Church
+                    </figcaption>
+                </figure>
+            </div>
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/out_icon.jpg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Before:</strong> Icon
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/white_icon.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>After:</strong> Icon
+                    </figcaption>
+                </figure>
+            </div>
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/out_harvesters.jpg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Before:</strong> Harvesters
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/white_harvesters.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>After:</strong> Harvesters
+                    </figcaption>
+                </figure>
+            </div>
+            
+        </div>
+    </section>
+    <script src="script.js"></script>
+</body>
+</html>

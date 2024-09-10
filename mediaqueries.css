@@ -46,6 +46,30 @@
     .about-containers {
       margin-top: 0;
     }
+
+    #project-header {
+        height: 40vh;
+    }
+
+    .project-title {
+        font-size: 2.5rem;
+    }
+
+    #project-intro {
+        padding: 4rem 5%;
+    }
+
+    .intro-images {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .intro-img {
+        width: 100%;
+        max-width: 400px;
+        height: auto;
+        margin-bottom: 1rem;
+    }
   }
   
   @media screen and (max-width: 600px) {
@@ -101,5 +125,37 @@
     .text-container {
       text-align: justify;
     }
+
+    #project-header {
+        height: 30vh;
+    }
+
+    .project-title {
+        font-size: 2rem;
+    }
+
+    #project-intro {
+        padding: 2rem 5%;
+    }
+
+    #project-intro h2 {
+        font-size: 2rem;
+    }
+
+    .intro-images {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .intro-img {
+        width: 100%;
+        max-width: 400px;
+        height: auto;
+        margin-bottom: 1rem;
+    }
+
+    .image-collage {
+        grid-template-columns: 1fr;
+    }
   }
-  
+
