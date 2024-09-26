@@ -578,7 +578,7 @@ footer p {
 }
 
 .image-item {
-    width: 75%;
+    width: 80%;
     text-align: center;
 }
 
@@ -588,8 +588,8 @@ footer p {
 }
 
 .row-image {
-    width: 75%; /* Adjust this value to control image size */
+    width: 80%; /* Adjust this value to control image size */
     height: auto;
     object-fit: cover;
-    border-radius: 2rem;
+    border-radius: 1rem;
 }
