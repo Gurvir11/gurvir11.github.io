@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun with Filters and Frequencies - Gurvir Kooner</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="mediaqueries.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <nav id="desktop-nav">
+        <div class="logo">Gurvir Kooner</div>
+        <div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="index.html#experience">Experience</a></li>
+                <li><a href="index.html#projects">Projects</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+    <nav id="hamburger-nav">
+        <div class="logo">Gurvir Kooner</div>
+        <div class="hamburger-menu">
+            <div class="hamburger-icon" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="menu-links">
+                <li><a href="index.html" onclick="toggleMenu()">Home</a></li>
+                <li><a href="index.html#about" onclick="toggleMenu()">About</a></li>
+                <li><a href="index.html#experience" onclick="toggleMenu()">Experience</a></li>
+                <li><a href="index.html#projects" onclick="toggleMenu()">Projects</a></li>
+                <li><a href="index.html#contact" onclick="toggleMenu()">Contact</a></li>
+            </div>
+        </div>
+    </nav>
+    
+    <section id="project-header">
+        <div class="banner-container">
+            <img src="./assets/project-2.jpg" alt="Fun with Filters and Frequencies" class="banner-img">
+            <div class="banner-overlay">
+                <h1 class="proj-title">Fun with Filters and Frequencies</h1>
+            </div>
+        </div>
+    </section>
+
+    <section id="project-intro">
+        <div class="section-container">
+            <h2>Finite Difference Operator</h2>
+            <p>
+                Suppose we have an input image \(I\) and the following finite difference operators \(D_x\) and \(D_y\) :
+                $$D_x = [1, -1]$$ $$D_y = \begin{bmatrix} 1 \\ -1 \end{bmatrix}$$
+            </p>
+            <figure class="centered-image">
+                <img src="./assets/cameraman.png" alt="Cameraman Image">
+                <figcaption>\(I\)</figcaption>
+            </figure>
+            <p>
+                Convolving \(I\) with \(D_x\) will give us the partial derivative with respect to x, showing us the vertical edges.
+                Convolving \(I\) with \(D_y\) will give us the partial derivative with respect to y, showing us the horizontal edges.
+
+            </p>
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/finite-difference-dx.jpg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Vertical Edges</strong>
+                        <br>
+                        \(\frac{\partial I}{\partial x} = I * D_x\)
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/finite-difference-dy.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Horizontal Edges</strong>
+                        <br>
+                        \(\frac{\partial I}{\partial y} = I * D_y\)
+                    </figcaption>
+                </figure>
+            </div> 
+            <p>
+                Now that we have \(\frac{\partial I}{\partial x}\) and \(\frac{\partial I}{\partial y}\) we can compute the gradient magnitude image \(G\) as follows:
+                $$G = \sqrt{\left(\frac{\partial I}{\partial x}\right)^2 + \left(\frac{\partial I}{\partial y}\right)^2}$$
+                We can then apply a threshold on the pixel intensities to binarize \(G\) by setting all the pixels greater than our threshold to 1, and the rest of the pixels to 0.
+                <br>
+                <br>
+                Here are the final results using a threshold of <strong>0.25</strong>:
+            </p>
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/finite-difference-gradient.jpg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Gradient Magnitude</strong>
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/finite-difference-binarized.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Binarized</strong>
+                    </figcaption>
+                </figure>
+            </div> 
+            <h2>Derivative of Gaussian (DoG) Filter</h2>
+            <p>
+                Using just the difference operator can lead to noisy results. We can apply a Gaussian filter, as a smooth operation.
+                After generating a blurred version of the original image we can repeat our procedure above to regenerate the edge image.
+                However, to binarize this edge image with a threshold of <strong>0.1</strong>.
+            </p>
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/cameraman.png" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Original Image</strong>
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/dog-blurred.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Blurred</strong>
+                    </figcaption>
+                </figure>
+            </div> 
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/dog-blur-dx.jpg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Vertical Edges</strong>
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/dog-blur-dy.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Horizontal Edges</strong>
+                    </figcaption>
+                </figure>
+            </div> 
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/dog-blur-gradient.jpg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Gradient Magnitude</strong>
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/dog-blur-binarized.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Binarized</strong>
+                    </figcaption>
+                </figure>
+            </div> 
+            <p>
+                There are noticeable differences between the binarized image when using the Gaussian filter compared to just the finite difference operator.
+                We were to have a smoother image with less noise throughout the image, especially at the bottom. Furthermore, we also have thicker, smoother edges.
+            </p>
+            <p>
+                We can also get the same result if we convolve our Gaussian with \(D_x\) and \(D_y\). This will give us \(DoG_x\) and \(DoG_y\). We can then convolve
+                \(I\) with \(DoG_x\) and \(DoG_y\) to get \(\frac{\partial I}{\partial x}\) and \(\frac{\partial I}{\partial y}\). Consequently, giving us the same 
+                gradient magnitude and edge images.
+            </p>
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/dogx.png" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>\(DoG_x\)</strong>
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/dogy.png" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>\(DoG_y\)</strong>
+                    </figcaption>
+                </figure>
+            </div> 
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/dog-gradient.jpg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Gradient Magnitude</strong>
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/dog-binarized.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Binarized</strong>
+                    </figcaption>
+                </figure>
+            </div> 
+            <h2>Image "Sharpening"</h2>
+            <p>
+                We can "sharpen" images by using the Gaussian filter to act as a low pass filter that only retains the low frequencies in an image. 
+                We then subtract this blurred version from the original image to get the high frequencies of an image. We can add these high frequencies
+                with some scaling factor, \(\alpha\), to make the image appear sharper with stronger high frequencies.
+            </p>
+            <p>
+                Let \(G\) be our Gaussian filter, \(I\) be our original image, and \(S\) be our "sharpened" image. The procedure is as follows:
+                $$S = I + \alpha(I - I * G)$$
+            </p>
+            <p>
+                We can condense this into a single convolution operation by creating the unsharp mask filter. Let \(e\) be our unit impulse kernel,
+                which is the same size as our Gaussian kernel with 1 in the center and 0s everywhere else.
+            </p>
+            <p>
+                The unsharp mask filter, \(U\), is written as follows:
+                $$U = (1 + \alpha)e - \alpha G$$
+            </p>
+            <p>
+                Therefore,
+                $$S = I * U$$
+            </p>
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/taj.jpg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Taj Mahal</strong>: Original
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/taj-sharpened.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Taj Mahal</strong>: Sharpened \(\alpha = 1\)
+                    </figcaption>
+                </figure>
+            </div>
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/space-presharpen.jpg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Space</strong>: Original
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/space-sharpened.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Space</strong>: Sharpened \(\alpha = 2.0\)
+                    </figcaption>
+                </figure>
+            </div>  
+            <p>
+                Let's examine how effective this filter is in sharpening a sharp image that's been blurred.
+            </p>
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/cat-sharp.jpeg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Cat</strong>: Original
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/cat-sharp-blur.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Cat</strong>: Blur
+                    </figcaption>
+                </figure>
+            </div> 
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/cat-sharp-blur.jpg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Cat</strong>: Blur
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/sharpen-cat-sharp-blur.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Cat</strong>: Blur Sharpened \(\alpha=5.0\)
+                    </figcaption>
+                </figure>
+            </div> 
+
+            <p>
+                We see that the unsharp filter mask is very effective at sharpening the edges like the whiskers to make the blurred cat seem like the sharp cat.
+                But it fails to fully sharpen some of the finer details like the fur on the cat's forehead.
+            </p>
+            <h2>Hybrid Images</h2>
+            <p>
+                Hybrid images are static images that viewers' interpretation of change depending on their viewing distance.
+                We can extract the high frequencies in one image using high pass filter and the low
+                frequencies of other using a low pass filter (Gaussian filter). Once we have these frequencies, we can take the average
+                of these two filtered images to create our hybrid image.
+            </p>
+            <p>
+                Viewing the hybrid image from close by will display the image we applied the high pass filter on, whereas further away
+                we will perceive the image we applied the low pass filter on.
+            </p>
+            <h4>Derek-Nutmeg Hybrid</h4>
+            <div class="three-image-container">
+                <figure class="image-item">
+                    <h4>Derek</h4>
+                    <img src="assets/derek-cropped.jpg" alt="Image 1" class="row-image">
+                    <figcaption>Low Frequency Image</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <h4>Nutmeg</h4>
+                    <img src="assets/nutmeg-cropped.jpg" alt="Image 2" class="row-image">
+                    <figcaption>High Frequency</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <h4>Derek-Nutmeg</h4>
+                    <img src="assets/derek-hybrid.jpg" alt="Image 3" class="row-image">
+                    <figcaption>Hybrid Image Result</figcaption>
+                </figure>
+            </div>
+            <h4>Derek-Nutmeg Fourier Analysis</h4>
+            <p>
+                Below is the frequency analysis of the Derek-Nutmeg hybrid process using Fourier transforms. These transforms
+                were applied on the original input images, filtered images, and the resulting hybrid image.
+            </p>
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <h4>Derek</h4>
+                    <img src="assets/derek-fft.jpg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Low Frequency Input Image FFT</strong>
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <h4>Derek</h4>
+                    <img src="assets/derek-filtered-fft.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Low Frequency Filtered Image FFT</strong>
+                    </figcaption>
+                </figure>
+            </div> 
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <h4>Nutmeg</h4>
+                    <img src="assets/nutmeg-fft.jpg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>High Frequency Input Image FFT</strong>
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <h4>Nutmeg</h4>
+                    <img src="assets/nutmeg-filtered-fft.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>High Frequency Filtered Image FFT</strong>
+                    </figcaption>
+                </figure>
+            </div> 
+            <figure class="centered-image">
+                <h4>Derek-Nutmeg</h4>
+                <img src="./assets/derek-hybrid-fft.jpg" alt="Derek Hybrid Image">
+                <figcaption><strong>Hybrid Image FFT</strong></figcaption>
+            </figure>
+            <h4>Rock-Vin Diesel Hybrid</h4>
+            <div class="three-image-container">
+                <figure class="image-item">
+                    <h4>Rock</h4>
+                    <img src="assets/rock-cropped.jpg" alt="Image 1" class="row-image">
+                    <figcaption>Low Frequency Image</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <h4>Vin Diesel</h4>
+                    <img src="assets/vin-cropped.jpg"Image 2" class="row-image">
+                    <figcaption>High Frequency</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <h4>Rock-Vin Diesel</h4>
+                    <img src="assets/rock-hybrid.jpg" alt="Image 3" class="row-image">
+                    <figcaption>Hybrid Image Result</figcaption>
+                </figure>
+            </div>
+            <h4>Failure Case: Squid-Pyramids Hybrid</h4>
+            <div class="three-image-container">
+                <figure class="image-item">
+                    <h4>Squidward</h4>
+                    <img src="assets/squidward-cropped.jpg" alt="Image 1" class="row-image">
+                    <figcaption>Low Frequency Image</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <h4>Pyramids</h4>
+                    <img src="assets/pyramids-cropped.jpg" alt="Image 2" class="row-image">
+                    <figcaption>High Frequency</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <h4>Squid-Pyramids</h4>
+                    <img src="assets/squidward-hybrid.jpg" alt="Image 3" class="row-image">
+                    <figcaption>Hybrid Image Result</figcaption>
+                </figure>
+            </div>
+            <p>
+                We see the hybrid of Squidward and the pyramids proves to be less seamless than the hybrid of the Rock
+                and Vin Diesel. This is because finding reasonable alignment points with the pyramids and Squidward is difficult
+                due to the differing shapes and sizes. We also see the high frequencies from the pyramids bricks are hard to reconcile with
+                the thick strokes that compose Squidward's face. We have to apply significant blurring to Squidward to get a
+                somewhat reasonable result, but ulimately makes the Squidward unrecognizable at large distances. However, as the low frequency image
+                it should be visible.
+            </p>
+            <h2>Gaussian and Laplacian Stacks</h2>
+            <p>
+                To blend images together we can leverage Gaussian and Laplacian stacks. To construct a Gaussian stack, we apply a Gaussian filter to an
+                input image. As we increase the number of levels within the stack, we increase the \(\sigma\) to create a coarser image. At each level,
+                the size of the image remains the same. For my implementation, I scaled the \(\sigma\) by 2 after each level.
+            </p>
+            <p>
+                A Laplacian stack is computed by taking the difference between the current level of the Gaussian stack and previous level. The last image
+                on the Laplacian stack is the same as the last image of the Gaussian stack. 
+            </p>
+            <p>
+                Below is a visualization of the Laplacian stack for the oraple image.
+            </p>
+            <div class="three-image-container">
+                <figure class="image-item">
+                    <h4>Apple</h4>
+                    <img src="assets/apple-0.jpg" alt="Image 1" class="row-image">
+                    <figcaption>Level 0</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <h4>Orange</h4>
+                    <img src="assets/orange-0.jpg" alt="Image 2" class="row-image">
+                    <figcaption>Level 0</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <h4>Oraple</h4>
+                    <img src="assets/oraple-0.jpg" alt="Image 3" class="row-image">
+                    <figcaption>Level 0</figcaption>
+                </figure>
+            </div>
+            <div class="three-image-container">
+                <figure class="image-item">
+                    <img src="assets/apple-2.jpg" alt="Image 1" class="row-image">
+                    <figcaption>Level 2</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <img src="assets/orange-2.jpg" alt="Image 2" class="row-image">
+                    <figcaption>Level 2</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <img src="assets/oraple-2.jpg" alt="Image 3" class="row-image">
+                    <figcaption>Level 2</figcaption>
+                </figure>
+            </div>
+            <div class="three-image-container">
+                <figure class="image-item">
+                    <img src="assets/apple-4.jpg" alt="Image 1" class="row-image">
+                    <figcaption>Level 4</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <img src="assets/orange-4.jpg" alt="Image 2" class="row-image">
+                    <figcaption>Level 4</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <img src="assets/oraple-4.jpg" alt="Image 3" class="row-image">
+                    <figcaption>Level 4</figcaption>
+                </figure>
+            </div>
+            <div class="three-image-container">
+                <figure class="image-item">
+                    <img src="assets/apple-final.jpg" alt="Image 1" class="row-image">
+                    <figcaption>Collapsed Laplacian</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <img src="assets/orange-final.jpg" alt="Image 2" class="row-image">
+                    <figcaption>Collapsed Laplacian</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <img src="assets/oraple-final.jpg" alt="Image 3" class="row-image">
+                    <figcaption>Collapsed Laplacian</figcaption>
+                </figure>
+            </div>
+            <h2>Multiresolution Blending</h2>
+            <p>
+                Suppose we have two images \(A\) and \(B\). To blend them using some mask \(M\) we can leverage multiresolution blending.
+                We can compute the Laplacian stack of each input image, \(LA\) and \(LB\). After that, we compute a Gaussian stack for the mask,
+                \(GM\). For each level, we compute a combined Laplacian stack as follows:
+                $$LS_l(i, j) = GM_l(i, j) LA_l(i, j) + (1 - GM_l(i,j)) LB_l(i, j)$$
+                To get our blended image, we collapse the combined Laplacian stack.
+            </p>
+            <p>
+                Below are the some examples of multiresolution blending using the procedure above.
+            </p>
+            <h4>Pumona</h4>
+            <div class="three-image-container">
+                <figure class="image-item">
+                    <img src="assets/puppy-aligned.jpg" alt="Image 1" class="row-image">
+                    <figcaption>Puppy</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <img src="assets/mona-aligned.jpg" alt="Image 2" class="row-image">
+                    <figcaption>Mona Lisa</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <img src="assets/puppy-mask-aligned.png" alt="Image 3" class="row-image">
+                    <figcaption>Puppy Mask</figcaption>
+                </figure>
+            </div>
+            <figure class="centered-image">
+                <h4>Liange</h4>
+                <img src="./assets/pumona-final.jpg" alt="Derek Hybrid Image">
+                <figcaption>Pumona</figcaption>
+            </figure>
+            <h4>Pumona Laplacian Stack</h4>
+            <div class="three-image-container">
+                <figure class="image-item">
+                    <h4>Puppy</h4>
+                    <img src="assets/puppy-0.jpg" alt="Image 1" class="row-image">
+                    <figcaption>Level 0</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <h4>Mona Lisa</h4>
+                    <img src="assets/mona-0.jpg" alt="Image 2" class="row-image">
+                    <figcaption>Level 0</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <h4>Pumona</h4>
+                    <img src="assets/pumona-0.jpg" alt="Image 3" class="row-image">
+                    <figcaption>Level 0</figcaption>
+                </figure>
+            </div>
+            <div class="three-image-container">
+                <figure class="image-item">
+                    <img src="assets/puppy-2.jpg" alt="Image 1" class="row-image">
+                    <figcaption>Level 2</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <img src="assets/mona-2.jpg" alt="Image 2" class="row-image">
+                    <figcaption>Level 2</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <img src="assets/pumona-2.jpg" alt="Image 3" class="row-image">
+                    <figcaption>Level 2</figcaption>
+                </figure>
+            </div>
+            <div class="three-image-container">
+                <figure class="image-item">
+                    <img src="assets/puppy-4.jpg" alt="Image 1" class="row-image">
+                    <figcaption>Level 4</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <img src="assets/mona-4.jpg" alt="Image 2" class="row-image">
+                    <figcaption>Level 4</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <img src="assets/pumona-4.jpg" alt="Image 3" class="row-image">
+                    <figcaption>Level 4</figcaption>
+                </figure>
+            </div>
+            <div class="three-image-container">
+                <figure class="image-item">
+                    <img src="assets/puppy-final.jpg" alt="Image 1" class="row-image">
+                    <figcaption>Collapsed Laplacian</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <img src="assets/mona-final.jpg" alt="Image 2" class="row-image">
+                    <figcaption>Collapsed Laplacian</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <img src="assets/pumona-final.jpg" alt="Image 3" class="row-image">
+                    <figcaption>Collapsed Laplacian</figcaption>
+                </figure>
+            </div>
+            <h4>Liange</h4>
+            <div class="three-image-container">
+                <figure class="image-item">
+                    <img src="assets/lime-aligned.jpg" alt="Image 1" class="row-image">
+                    <figcaption>Lime</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <img src="assets/orange-aligned.jpg" alt="Image 2" class="row-image">
+                    <figcaption>Orange Slice</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <img src="assets/lime_mask.jpg" alt="Image 3" class="row-image">
+                    <figcaption>Lime Mask</figcaption>
+                </figure>
+            </div>
+            <figure class="centered-image">
+                <h4>Liange</h4>
+                <img src="./assets/liange.jpg" alt="Derek Hybrid Image">
+                <figcaption>Liange</figcaption>
+            </figure>
+            <br>
+            <br>
+ 
+            
+        </div>
+    </section>
+    <script src="script.js"></script>
+</body>
+</html>

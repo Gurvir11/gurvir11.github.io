@@ -531,9 +531,9 @@ footer p {
 }
 
 .centered-image img {
-    max-width: 100%; /* Ensure the image is responsive */
+    max-width: 50%; /* Ensure the image is responsive */
     height: auto; /* Maintain aspect ratio */
-    border-radius: 1rem; /* Optional: add rounded corners */
+    border-radius: 4rem; /* Optional: add rounded corners */
 }
 
 .centered-image figcaption {
@@ -567,4 +567,29 @@ footer p {
     font-size: 0.9rem;
     color: #666; /* Optional: change the color for better readability */
     line-height: 1.4; /* Improve readability for multiline text */
+}
+
+.three-image-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 2rem 0;
+    gap: 1rem;
+}
+
+.image-item {
+    width: 75%;
+    text-align: center;
+}
+
+.image-item h4 {
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.row-image {
+    width: 75%; /* Adjust this value to control image size */
+    height: auto;
+    object-fit: cover;
+    border-radius: 2rem;
 }
