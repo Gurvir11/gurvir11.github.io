@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun with Filters and Frequencies - Gurvir Kooner</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="mediaqueries.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <nav id="desktop-nav">
+        <div class="logo">Gurvir Kooner</div>
+        <div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="index.html#experience">Experience</a></li>
+                <li><a href="index.html#projects">Projects</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+    <nav id="hamburger-nav">
+        <div class="logo">Gurvir Kooner</div>
+        <div class="hamburger-menu">
+            <div class="hamburger-icon" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="menu-links">
+                <li><a href="index.html" onclick="toggleMenu()">Home</a></li>
+                <li><a href="index.html#about" onclick="toggleMenu()">About</a></li>
+                <li><a href="index.html#experience" onclick="toggleMenu()">Experience</a></li>
+                <li><a href="index.html#projects" onclick="toggleMenu()">Projects</a></li>
+                <li><a href="index.html#contact" onclick="toggleMenu()">Contact</a></li>
+            </div>
+        </div>
+    </nav>
+    
+    <section id="project-header">
+        <div class="banner-container">
+            <img src="./assets/proj3-intro.gif" alt="Face Morphing" class="banner-img">
+            <div class="banner-overlay">
+                <h1 class="proj-title">Face Morphing</h1>
+            </div>
+        </div>
+    </section>
+
+    <section id="project-intro">
+        <div class="section-container">
+            <h2>Overview</h2>
+            <p>
+                In this project, I will be constructing an animated morph of my face to someone else's face, compute the average face
+                of a population, and I will produce caricatures by extrapolating from this population mean. In order to morph, we will
+                simultaneously warp the image shapes and cross-dissolve the image colors.
+            </p>
+            <h2>Defining Correspondences</h2>
+            <p>
+                To create a "good" morph between two images, we need to define pairs of corresponding points on the two images we want
+                to morph.
+                <br>
+                <br>
+                In order to do this, I first aligned and cropped an image of me and Jason Momoa to be the same size and aspect ratio.
+                Afterwards, I used the <a href="https://cal-cs180.github.io/fa23/hw/proj3/tool.html">labeling tool</a> provided to select
+                my correspondence points to link the faces. Once I had the two sets of correspondence points mapping the two images, I computed
+                the mean of these two sets. Finally I computed a Delaunay triangularization on this midway image to be used for morphing. Using
+                the midway shape for triangularization lessens potential triangle deformations.
+                <br>
+                <br>
+                Here are the results:
+            </p>
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/gurvir-a-final.jpg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Gurvir</strong>
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/jason-b-final.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Jason Momoa</strong>
+                    </figcaption>
+                </figure>
+            </div> 
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/gurvir-tri-resized.png" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Triangulation - Gurvir</strong>
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/jason-tri-resized.png" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Triangulation - Jason Momoa</strong>
+                    </figcaption>
+                </figure>
+            </div> 
+            <h2>Computing the "Mid-Way Face"</h2>
+            <p>
+                To better understand how the morphing process would look I first computed the midway face of Jason and I
+                using the following process:
+                <br>
+                <br>
+                First, I computed the average shape of Jason and I by taking the mean of the correspondence points of each image.
+                $$average\_shape = 0.5 * img1\_pts + 0.5 * img2\_pts$$
+                Then, I computed the affine transformation matrix A between the triangles in the source and target image to their corresponding
+                triangle in the average shape. Using inverse warping, we determine the points in our input image that correspond with the points in our
+                average triangle. Since these points may be non-integer values we use nearest neighbor interpolation to determine the colors from the source and target image.
+                <br>
+                <br>
+                Finally, we cross dissolve by averaging the colors from the source and target images.
+                <br>
+                <br>
+                Here are the results below:
+            </p>
+            <div class="three-image-container">
+                <figure class="image-item">
+                    <img src="assets/gurvir-a-final.jpg" alt="Image 1" class="row-image">
+                    <figcaption>Gurvir</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <img src="assets/gurmoa-midway.jpg" alt="Image 2" class="row-image">
+                    <figcaption>Gurmoa Midway</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <img src="assets/jason-b-final.jpg" alt="Image 3" class="row-image">
+                    <figcaption>Jason Momoa</figcaption>
+                </figure>
+            </div>
+            <h2>The Morph Sequence</h2>
+            <p>
+               In order to create a full morph sequence from the source image to the target image, we apply the same process we did
+               for the midway face. However, we create many intermediate frames. We use a weighted average with weights ranging
+               from 0 to 1 inclusive that are gradually adjusted frame by frame to control our shape warping and cross-dissolve.
+               <br>
+               <br>
+               To create my sequence I used 45 frames displayed at 30 FPS. Here are the results:
+            </p>
+            <figure class="centered-image">
+                <img src="./assets/gurmoa.gif" alt="Derek Hybrid Image">
+                <figcaption><strong>Gurvir-Jason Morph</strong></figcaption>
+            </figure>
+            <h2>The "Mean Face" of a Population</h2>
+            <p>
+                To determine the mean face of a population we first compute the average corresponding point locations within the dataset.
+                Then, we warp each sample in the dataset into the average shape. Finally, we then take the average of all these warped images
+                to get our "mean face".
+                <br>
+                <br>
+                I did this for the <a href="https://web.archive.org/web/20210305094647/http://www2.imm.dtu.dk/~aam/datasets/datasets.html">Danes</a> dataset.
+                I parsed the .asf files in the dataset to extract the correspondences and determined the average face shape. Here are some of the 
+                Danish images warped to the average Dane face shape.
+            </p>
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/warp-example-1-original.jpg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Example 1: Original</strong>
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/warp-example-1-warped.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Example 1: Warped</strong>
+                    </figcaption>
+                </figure>
+            </div>
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/warp-example-2-original.jpg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Example 2: Original</strong>
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/warp-example-2-warped.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Example 2: Warped</strong>
+                    </figcaption>
+                </figure>
+            </div>
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/warp-example-3-original.jpg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Example 3: Original</strong>
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/warp-example-3-warped.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Example 3: Warped</strong>
+                    </figcaption>
+                </figure>
+            </div>    
+            <p>
+                After doing this for all the images in the dataset and then averaging, we determine the "mean face" for the 
+                Danes is this:
+            </p>
+            <figure class="centered-image">
+                <img src="./assets/average-dane.jpg" alt="Average Dane">
+                <figcaption><strong>Average Dane</strong></figcaption>
+            </figure>
+            <p>
+                Now let's morph my face into average geometry for the Danes.
+            </p>
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/gurvir-danish.jpg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Gurvir</strong>
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/gurvir-dane-shape.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Gurvir Warped</strong>
+                    </figcaption>
+                </figure>
+            </div> 
+            <p>
+                Now let's morph the average Danish face warped into my geometry.
+            </p>
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/average-dane.jpg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Average Dane</strong>
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/dane-gurvir-shape.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Gurvir Warped</strong>
+                    </figcaption>
+                </figure>
+            </div>
+            <h2>Caricatures: Extrapolating from the Mean</h2>
+            <p>
+                By extrapolating from the population mean calculated in the previous part we can create
+                caricatures of my face. We can take the difference between the population mean and my face
+                and amplify them using a parameter, \(\alpha\).
+                <br>
+                <br>
+                Below are some examples:
+            </p>
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/caricature-negative.jpg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>\(\alpha\) = -1</strong>
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/caricature-positive.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>\(\alpha\) = 2</strong>
+                    </figcaption>
+                </figure>
+            </div>
+            <h2>B&W: Changing Ethnicity & Gender</h2>
+            <p>
+                For this part I changed my ethnicity and gender using the <a href="https://pmsol3.wordpress.com/wp-content/uploads/2009/08/thaiwoman.jpg">average Thai female
+                face</a>. After resizing the images I selected correspondence points for two images. Below I morph the shape only, the appearance only, and then finally both.
+                Because of the turban and beard the morph wasn't the best, however, I found it funny and roughly a success given the circumstances.
+                <br>
+                <br>
+                Below are the results:
+            </p>
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/gurvir-thai.jpg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Gurvir</strong>
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/average-thai-woman.png" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Average Thai Woman</strong>
+                    </figcaption>
+                </figure>
+            </div>
+            <div class="three-image-container">
+                <figure class="image-item">
+                    <img src="assets/shape-only.jpg" alt="Image 1" class="row-image">
+                    <figcaption>Shape Only</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <img src="assets/appearance-only.jpg" alt="Image 2" class="row-image">
+                    <figcaption>Appearance Only</figcaption>
+                </figure>
+                <figure class="image-item">
+                    <img src="assets/both.jpg" alt="Image 3" class="row-image">
+                    <figcaption>Both</figcaption>
+                </figure>
+            </div>
+            <br>
+            <br>
+        </div>
+    </section>
+    <script src="script.js"></script>
+</body>
+</html>
