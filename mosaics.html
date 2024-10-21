@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun with Filters and Frequencies - Gurvir Kooner</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="mediaqueries.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <nav id="desktop-nav">
+        <div class="logo">Gurvir Kooner</div>
+        <div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="index.html#experience">Experience</a></li>
+                <li><a href="index.html#projects">Projects</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+    <nav id="hamburger-nav">
+        <div class="logo">Gurvir Kooner</div>
+        <div class="hamburger-menu">
+            <div class="hamburger-icon" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="menu-links">
+                <li><a href="index.html" onclick="toggleMenu()">Home</a></li>
+                <li><a href="index.html#about" onclick="toggleMenu()">About</a></li>
+                <li><a href="index.html#experience" onclick="toggleMenu()">Experience</a></li>
+                <li><a href="index.html#projects" onclick="toggleMenu()">Projects</a></li>
+                <li><a href="index.html#contact" onclick="toggleMenu()">Contact</a></li>
+            </div>
+        </div>
+    </nav>
+    
+    <section id="project-header">
+        <div class="banner-container">
+            <img src="./assets/proj4.jpg" alt="Face Morphing" class="banner-img">
+            <div class="banner-overlay">
+                <h1 class="proj-title">Photo Mosaics</h1>
+            </div>
+        </div>
+    </section>
+
+    <section id="project-intro">
+        <div class="section-container">
+            <h2>Part A: Image Warping and Mosaicing</h1>
+            <h2>Shooting the Pictures</h2>
+            <p>
+                Below are images I shot so the transforms between them are projective so I can create image mosaics using them.
+                I chose images at School of Law, Haas, and South Hall.
+            </p>
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/law-left.jpg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>School of Law - Left</strong>
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/law-right.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>School of Law - Right</strong>
+                    </figcaption>
+                </figure>
+            </div> 
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/haas-left.jpg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Haas - Left</strong>
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/haas-right.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Haas - Right</strong>
+                    </figcaption>
+                </figure>
+            </div> 
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/south-left.jpg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>South Hall - Left</strong>
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/south-right.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>South Hall - Right</strong>
+                    </figcaption>
+                </figure>
+            </div> 
+            <h2>Recovering Homographies</h2>
+            <p>
+                We can represent the projective transformation between each left and right image using a homography matrix, \(H\),
+                Our projective transformation can be written as \(Hp = p'\). Where \(p\) is a homogeneous coordinate of a point in the left image,
+                and \(p'\) is its corresponding point in the right image. 
+
+                $$
+                    H = 
+                    \begin{bmatrix}
+                    a & b & c \\
+                    d & e & f \\
+                    g & h & 1
+                    \end{bmatrix}
+                $$
+                
+                The projective transformation is as follows: 
+                $$
+                    \begin{bmatrix}
+                    a & b & c \\
+                    d & e & f \\
+                    g & h & 1
+                    \end{bmatrix}
+                    \begin{bmatrix}
+                    x_1 \\
+                    y_1 \\
+                    1
+                    \end{bmatrix}
+                    =
+                    \begin{bmatrix}
+                    wx_1' \\
+                    wy_1' \\
+                    w
+                    \end{bmatrix}
+                $$
+
+                Using our corresponding pairs of points we can recover the homography, \(H\), by solving the following system using least squares.
+                We stack each correspondence pair in a matrix, \(P\), on the left, and a vector \(q\) on the right. Since we have 8 degrees of freedom,
+                we need at least 4 points.
+
+                $$
+                \begin{bmatrix}
+                x_1 & y_1 & 1 & 0 & 0 & 0 & -x_1'x_1 & -x_1'y_1 \\
+                0 & 0 & 0 & x_1 & y_1 & 1 & -y_1'x_1 & -y_1'y_1 \\
+                \end{bmatrix}
+                \begin{bmatrix}
+                a \\
+                b \\
+                c \\
+                d \\
+                e \\
+                f \\
+                g \\
+                h
+                \end{bmatrix}
+                =
+                \begin{bmatrix}
+                x_1' \\
+                y_1'
+                \end{bmatrix}
+                $$
+
+            </p>
+            <h2>Warp the Images</h2>
+            <p>
+                After we recovered the homography, \(H\), we want to be able to warp images using it. To do this we take the corners
+                of the image we would like to warp and apply H to get the tranformed coordinates on the warped image.
+
+                We do this as follows:
+                $$
+                \begin{bmatrix}
+                a & b & c \\
+                d & e & f \\
+                g & h & 1
+                \end{bmatrix}
+                \begin{bmatrix}
+                x_1 \\
+                y_1 \\
+                1
+                \end{bmatrix}
+                =
+                \begin{bmatrix}
+                wx_1' \\
+                wy_1' \\
+                w
+                \end{bmatrix}
+                $$
+                $$
+                warped\ pixel\ location =                 
+                \begin{bmatrix}
+                \frac{x_1'}{w} \\
+                \frac{y_1'}{w} 
+                \end{bmatrix}
+                $$
+
+                Afterwards, we create a bounding box in the warped image that contains these morphed corners. We use inverse warping to
+                determine what these pixels would be in the original images and use interpolation to set these pixels in our warped image.
+            </p>
+            <h2>Image Rectification</h2>
+            <p>
+                To test if our warp works lets try to "rectify" some images by selecting a planar surface of an image and projecting it onto
+                a flat frontal-facing plane.
+
+                Here are the results below:
+            </p>
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <h5>Physics Building: Original</h5>
+                    <img src="assets/physics-original.png" alt="Before Image" class="before-after-img">
+                </figure>
+                <figure class="image-container">
+                    <h5>Physics Building: Warped</h5>
+                    <img src="assets/physics-warped.png" alt="After Image" class="before-after-img">
+                </figure>
+            </div>
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <h5>Hearst Mining: Original</h5>
+                    <img src="assets/hearst-original.png" alt="Before Image" class="before-after-img">
+                </figure>
+                <figure class="image-container">
+                    <h5>Hearst Mining: Warped</h4>
+                    <img src="assets/hearst-warped.png" alt="After Image" class="before-after-img">
+                </figure>
+            </div>   
+            <p>
+                We see the surfaces we chose have been warped to be frontal-facing.
+            </p>
+            <h2>Image Mosaics</h2>
+            <p>
+                After we project the left image into the right images space, we need to blend the two images together.
+                We can do this using 2-band "laplacian stack" blending. First, we create a mask of where the projected images
+                are on our blending canvas that will encompass both images. After we create these masks, we apply a distance transform
+                to find the distances of pixels in the mask to their nearest edge and then normalize these distance values from 0 to 1
+                for both images.
+            </p>
+            <p>Here are the results of this step on the School of Law left and right images: </p>
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/law-left-d1.jpg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>School of Law: Left Distance Transform</strong>
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/law-right-d2.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>School of Law: Right Distance Transform</strong>
+                    </figcaption>
+                </figure>
+            </div>
+            <p>
+                Now we apply a low-pass filter and a high-pass filter on the left and right images. We blend the low-pass
+                and high-pass left and right images separately and sum them to create our blended images.
+                To blend the low-pass filtered images we apply a weighted linear combination on the left and right images using the distance
+                transformed computed above.
+
+                To blend the high-pass filtered images we just selected the pixel from the image that has a greater distance value in each image.
+
+            </p>
+            <p>
+                Here are the results of the mosaics using the images chosen from the Shooting the Pictures section:
+            </p>
+            <figure class="centered-image">
+                <img src="./assets/law-mosaic.jpg" alt="Derek Hybrid Image">
+                <figcaption><strong>School of Law Mosaic</strong></figcaption>
+            </figure>
+            <figure class="centered-image">
+                <img src="./assets/haas-mosaic.jpg" alt="Derek Hybrid Image">
+                <figcaption><strong>Haas Mosaic</strong></figcaption>
+            </figure>
+            <figure class="centered-image">
+                <img src="./assets/south-mosaic.jpg" alt="Derek Hybrid Image">
+                <figcaption><strong>South Hall Mosaic</strong></figcaption>
+            </figure>
+            <br>
+            <br>
+        </div>
+    </section>
+    <script src="script.js"></script>
+</body>
+</html>
