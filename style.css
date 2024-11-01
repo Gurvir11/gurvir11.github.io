@@ -533,7 +533,7 @@ footer p {
 .centered-image img {
     max-width: 50%; /* Ensure the image is responsive */
     height: auto; /* Maintain aspect ratio */
-    border-radius: 4rem; /* Optional: add rounded corners */
+    border-radius: 1.5rem; /* Optional: add rounded corners */
 }
 
 .centered-image figcaption {
@@ -592,4 +592,21 @@ footer p {
     height: auto;
     object-fit: cover;
     border-radius: 1rem;
+}
+
+.steps-inline {
+    padding-left: 2rem;
+    margin: 0;
+}
+
+.steps-inline li {
+    font-family: "Poppins", sans-serif;
+    color: rgb(85, 85, 85);
+    font-size: 1rem;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.steps-inline li::marker {
+    color: rgb(85, 85, 85);
 }

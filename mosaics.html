@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fun with Filters and Frequencies - Gurvir Kooner</title>
+    <title>Mosaics - Gurvir Kooner</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="mediaqueries.css">
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -273,6 +273,168 @@
                 <img src="./assets/south-mosaic.jpg" alt="Derek Hybrid Image">
                 <figcaption><strong>South Hall Mosaic</strong></figcaption>
             </figure>
+            <h2>Part B: Autostitching</h2>
+            <h2>Corner Detection</h2>
+            <p>
+                For autostitching, we want to first create a set of interest points to use. 
+                To create this initial set of interest points we can use the Harris Interest Point 
+                Detector. We can use the Harris Interest Point Detector to get a matrix of "corner
+                strengths" representing the strength of the interest points in the image and set of 
+                interest points to use.
+                <br>
+                <br>
+                Applying the detector below we get the following set of interest points for a sample
+                image:
+            </p>
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/haas-left-matplot.png" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Haas - Left: Original</strong>
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/haas-left-harris.png" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Haas - Left: Harris</strong>
+                    </figcaption>
+                </figure>
+            </div>
+            <h2>Adaptive Non-Maximal Suppression (ANMS)</h2>
+            <p>
+                We see that the Harris interest points are clustered together and not evenly spaced
+                throughout the image. We can run adaptive non-maximal suppression to select interest points
+                with strong corner reponse that are spaced through the image. For each interest point we compute
+                the radius as follows:
+                $$
+                r_i = \min_j |\mathbf{x}_i - \mathbf{x}_j|, \text{ s.t. } f(\mathbf{x}_i) < c_{\text{robust}}f(\mathbf{x}_j), \mathbf{x}_j \in \mathcal{I}
+                $$
+
+                We select the top k points with the largest radii to make up our set of evenly spread out interest points.
+            </p>
+            <p>
+                Setting k=500, here is the comparison of the Harris interest points and the points after running ANMS:
+            </p>
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/haas-left-harris.png" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Haas - Left: Harris</strong>
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/haas-left-anms.png" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Haas - Left: ANMS</strong>
+                    </figcaption>
+                </figure>
+            </div>
+            <h2>Extracting Feature Descriptors</h2>
+            <p>
+                Once we have our finalized interest points, we want to extract features for each point. To do this we take a 40 x 40 window around 
+                each point. We then downsample using a scaling factor of 5 to create 8 x 8 patches. We bias/gain-normalize to have zero mean and unit
+                variance. We then flatten the patch into a vector, giving us a feature descriptor for each interest point.
+            </p>
+            <p>
+                Below we have an example of normalized patch before it is flattened:
+            </p>
+            <figure class="centered-image">
+                <img src="./assets/feature-descriptor.png" alt="Derek Hybrid Image">
+                <figcaption class="image-caption">
+                    <strong>Feature Descriptor Patch</strong>
+                </figcaption>
+            </figure>
+            <h2>Feature Matching</h2>
+            <p>
+                With the features extracted, we need to match features across our images to form correspondences. We first compute the distances between
+                the two sets of feature descriptors we have for our two images. Then we iterate through our first set of descriptors and find the first and
+                second nearest neighbor in the second set of descriptors. To reduce the number of outliers we use Lowe's trick and compute ratio of the first nearest neighbor distannce
+                and the second nearest neighbor distance. If the ratio is below some threshold, \(t\), we then count the feature in first feature descriptor set as a match with its
+                nearest neighbor in the second feature descriptor set.
+            </p>
+            <p>Here are the feature matches for the School of Law using \(t = 0.1\):</p>
+            <figure class="centered-image">
+                <img src="./assets/feature-matching.png" alt="Derek Hybrid Image">
+                <figcaption class="image-caption">
+                    <strong>School of Law: Feature Matches</strong>
+                </figcaption>
+            </figure>
+            <h2>RANSAC</h2>
+            <p>
+                Even with Lowe's trick we are left with some incorrect feature matches. When we compute the homography using least squares
+                with these outliers we skew the compute homography, creating invalid stitching and warps.
+
+                In order to remove the amount of outliers we apply RANSAC to create a set of inliers to compute our homography.
+                <br>
+                <br>
+                The steps are as follows:
+            </p>
+            <ol class="steps-inline">
+                <li>Select 4 feature matches at random</li>
+                <li>Compute the homography H (exact)</li>
+                <li>Compute inliers where \(dist(p_i', Hp_i) < \epsilon \)</li>
+                <li>Repeat steps 1-3 until we hit our max iterations</li>
+                <li>Keep the largest set of inliers found in our iterations</li>
+                <li>Recompute the homography H using least-squares on the largest set of inliers</li>
+            </ol>
+            <p>
+                Here are our feature matches after running RANSAC on the School of Law images:
+            </p>
+            <figure class="centered-image">
+                <img src="./assets/inliers.png" alt="Derek Hybrid Image">
+                <figcaption class="image-caption">
+                    <strong>School of Law: RANSAC</strong>
+                </figcaption>
+            </figure>
+            <h2>Results</h2>
+            <p>Here are the results comparing the hand-stitched mosaics versus the auto-stitched mosaics using feature matching and RANSAC: </p>
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/law-mosaic.jpg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>School of Law: Manual</strong>
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/law-auto.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>School of Law: Auto</strong>
+                    </figcaption>
+                </figure>
+            </div>
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/haas-mosaic.jpg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Haas: Manual</strong>
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/haas-auto.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>Haas: Auto</strong>
+                    </figcaption>
+                </figure>
+            </div>
+            <div class="before-after-container">
+                <figure class="image-container">
+                    <img src="assets/south-mosaic.jpg" alt="Before Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>South Hall: Manual</strong>
+                    </figcaption>
+                </figure>
+                <figure class="image-container">
+                    <img src="assets/south-auto.jpg" alt="After Image" class="before-after-img">
+                    <figcaption class="image-caption">
+                        <strong>South Hall: Auto</strong>
+                    </figcaption>
+                </figure>
+            </div>
+            <h2>What I Learned</h2>
+            <p>
+                What I found particularly interesting and cool was Lowe's trick and RANSAC as a tool to mitigate incorrect correspondences
+                and automatically chose the right ones to compute the homography.
+            </p>
             <br>
             <br>
         </div>
