@@ -527,13 +527,15 @@ footer p {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 2rem 0; /* Add margin to separate from other content */
+    margin: 2rem 0;
+    width: 100%;
 }
 
 .centered-image img {
-    max-width: 50%; /* Ensure the image is responsive */
-    height: auto; /* Maintain aspect ratio */
-    border-radius: 1.5rem; /* Optional: add rounded corners */
+    width: 100%;
+    max-width: 800px; /* Or whatever maximum size you want */
+    height: auto;
+    border-radius: 1.5rem;
 }
 
 .centered-image figcaption {
@@ -608,5 +610,46 @@ footer p {
 }
 
 .steps-inline li::marker {
+    color: rgb(85, 85, 85);
+}
+
+.four-image-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 2rem 0;
+    gap: 1rem;
+}
+
+.five-image-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 2rem 0;
+    gap: 1rem;
+}
+
+.seven-image-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 2rem 0;
+    gap: 1rem;
+}
+
+ul:not(.nav-links):not(.menu-links) {
+    color: rgb(85, 85, 85);
+    padding-left: 2rem;
+    margin: 0;
+}
+
+ul:not(.nav-links):not(.menu-links) li {
+    font-family: "Poppins", sans-serif;
+    font-size: 1rem;
+    margin: 0;
+    line-height: 1.5;
+}
+
+ul:not(.nav-links):not(.menu-links) li::marker {
     color: rgb(85, 85, 85);
 }
